@@ -39,12 +39,11 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -56,9 +55,6 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.whatziya.todoapplication.R
-import com.whatziya.todoapplication.data.database.entity.TaskEntity
-import com.whatziya.todoapplication.navigation.DEFAULT_TASK_ID
-import kotlinx.coroutines.flow.StateFlow
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -77,11 +73,13 @@ fun TaskScreen(
     LaunchedEffect(taskId) {
         viewModel.getTaskById(taskId)
     }
-    val task by remember { mutableStateOf(viewModel.task) }
-    val deadline by remember { mutableStateOf(task.value?.deadline) }
-    val text by remember { mutableStateOf(task.value?.text) }
+
+    val task by viewModel.task.collectAsState()
+
     val taskMode =
-        if (taskId == DEFAULT_TASK_ID) TaskScreenMode.NewTask else TaskScreenMode.EditTask
+        if (taskId.isEmpty()) TaskScreenMode.NewTask else TaskScreenMode.EditTask
+
+    println(taskMode)
     val context = LocalContext.current
 
     Scaffold(
@@ -90,7 +88,7 @@ fun TaskScreen(
                 onExit = onExit,
                 onSaveTask = {
 
-                    if (task.value?.text?.isNotEmpty() == false) {
+                    if (task?.text?.isEmpty() == true) {
                         Toast.makeText(context, "Введите текст задачи", Toast.LENGTH_SHORT).show()
                     } else {
                         when (taskMode) {
@@ -118,27 +116,30 @@ fun TaskScreen(
                     .padding(16.dp)
             ) {
                 TaskForm(
-                    text = text ?: "",
+                    text = task?.text ?: "",
                     onTextChange = {
                         viewModel.updateText(it)
                     }
                 )
                 ImportanceSelector(
-                    selectedImportance = viewModel.importanceLevel.intValue,
+                    selectedImportance = task?.importance ?: 0,
                     onImportanceChange = { viewModel.updateImportance(it) }
                 )
                 Spacer(Modifier.padding(vertical = 4.dp))
                 DeadlineSelector(
-                    selectedDate = deadline ?: System.currentTimeMillis(),
+                    selectedDate = if (taskId.isEmpty()) 0L else task?.deadline ?: 0L,
+                    isSwitchChecked = if (taskId.isEmpty()) false else task?.deadline != null,
                     onDeadlineChanged = { date ->
                         viewModel.updateDeadline(date)
                     }
                 )
                 Spacer(Modifier.padding(vertical = 4.dp))
-                DeleteTaskButton(onDelete = {
-                    viewModel.deleteTask(taskId)
-                    onExit()
-                })
+                if (taskId.isNotEmpty()) {
+                    DeleteTaskButton(onDelete = {
+                        viewModel.deleteTask(taskId)
+                        onExit()
+                    })
+                }
             }
 
 
@@ -175,10 +176,17 @@ fun DeleteTaskButton(
 @Composable
 fun DeadlineSelector(
     selectedDate: Long,
-    onDeadlineChanged: (Long) -> Unit
+    isSwitchChecked: Boolean,
+    onDeadlineChanged: (Long?) -> Unit
 ) {
-    var isSwitchChecked by remember { mutableStateOf(false) }
-    var selDate by remember { mutableLongStateOf(selectedDate) }
+    val isSwitchCheck = remember { mutableStateOf(isSwitchChecked) }
+    LaunchedEffect(isSwitchChecked) {
+        isSwitchCheck.value = isSwitchChecked
+    }
+    val finalDate = remember { mutableLongStateOf(selectedDate) }
+    LaunchedEffect(selectedDate) {
+        finalDate.longValue = selectedDate
+    }
     val context = LocalContext.current
 
     Row(
@@ -196,10 +204,10 @@ fun DeadlineSelector(
                 color = MaterialTheme.colorScheme.onPrimary
             )
             Text(
-                text = if (selDate == 0L) "Дата не выбрана" else SimpleDateFormat(
+                text = if (finalDate.longValue == 0L) "Дата не выбрана" else SimpleDateFormat(
                     "dd.MM.yyyy",
                     Locale.getDefault()
-                ).format(selDate),
+                ).format(finalDate.longValue),
                 modifier = Modifier.padding(vertical = 1.dp),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.primary
@@ -207,18 +215,18 @@ fun DeadlineSelector(
         }
         Spacer(modifier = Modifier.weight(1f))
         Switch(
-            checked = isSwitchChecked,
+            checked = isSwitchCheck.value,
             onCheckedChange = { isChecked ->
-                isSwitchChecked = isChecked
+                isSwitchCheck.value = isChecked
 
                 if (isChecked) {
                     showDatePickerDialog(context) { date ->
-                        selDate = date
+                        finalDate.longValue = date
                         onDeadlineChanged(date)
                     }
                 } else {
-                    selDate = 0L
-                    onDeadlineChanged(0L)  // Clear deadline date
+                    finalDate.longValue = 0L
+                    onDeadlineChanged(null)
                 }
             },
             colors = SwitchDefaults.colors(
@@ -346,7 +354,7 @@ fun TaskInputField(
     onTextChange: (String) -> Unit
 ) {
 
-    var textState by remember { mutableStateOf(TextFieldValue(text = taskText)) }
+    var textState = TextFieldValue(text = taskText)
 
     BasicTextField(
         value = textState,

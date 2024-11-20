@@ -2,12 +2,8 @@ package com.whatziya.todoapplication.data.dto.response
 
 import com.whatziya.todoapplication.data.dto.TaskItem
 
-
-data class TaskResDto(
+data class TasksResDto(
     val status: String? = null,
-    val element: TaskItem,
+    val list: List<TaskItem>,
     val revision: Int
 )
-
-
-

@@ -3,10 +3,10 @@ package com.whatziya.todoapplication.ui.screens.tasks
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.whatziya.todoapplication.data.database.entity.TaskEntity
-import com.whatziya.todoapplication.data.repository.task.TaskRepository
+import com.whatziya.todoapplication.data.repository.local.task.LocalRepository
 import com.whatziya.todoapplication.domain.usecase.DeleteUseCase
 import com.whatziya.todoapplication.domain.usecase.GetAllUseCase
-import com.whatziya.todoapplication.domain.usecase.UpdateTaskUseCase
+import com.whatziya.todoapplication.domain.usecase.UpdateUseCase
 import com.whatziya.todoapplication.preferences.PreferencesProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,9 +16,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TasksViewModel @Inject constructor(
-    private val taskRepository: TaskRepository,
+    private val taskRepository: LocalRepository,
     private val getAllUseCase: GetAllUseCase,
-    private val updateTaskUseCase: UpdateTaskUseCase,
+    private val updateUseCase: UpdateUseCase,
     private val deleteTaskUseCase: DeleteUseCase,
     private val preferencesProvider: PreferencesProvider
 ) : ViewModel() {
@@ -31,7 +31,9 @@ class TasksViewModel @Inject constructor(
             taskRepository.getAllTasks().collect { tasks ->
                 _tasks.value = tasks
             }
+            println(getAllUseCase())
         }
+
     }
 
     fun getAllTasks() {
@@ -58,7 +60,7 @@ class TasksViewModel @Inject constructor(
     fun updateTaskNet(task: TaskEntity) {
         viewModelScope.launch {
             val updatedTask = task.copy(isCompleted = !task.isCompleted)
-            updateTaskUseCase.invoke(
+            updateUseCase.invoke(
                 updatedTask,
                 taskId = updatedTask.id
             )

@@ -1,27 +1,31 @@
 package com.whatziya.todoapplication.data.source.remote
 
-import com.whatziya.todoapplication.data.api.TasksService
+import com.whatziya.todoapplication.data.api.TasksApi
 import com.whatziya.todoapplication.data.dto.request.TaskReqDto
 import com.whatziya.todoapplication.data.dto.response.TaskResDto
+import com.whatziya.todoapplication.data.dto.response.TasksResDto
 import javax.inject.Inject
 
 class TaskRemoteDataSourceImpl @Inject constructor(
-    private val tasksService: TasksService
+    private val tasksService: TasksApi
 ) : TaskRemoteDataSource {
-    override suspend fun getAll(): TaskResDto.GetAll {
-        return tasksService.getAll().body() ?: throw Exception("No body")
+    override suspend fun getAll(): TasksResDto {
+        return tasksService.getAll()
     }
 
-    override suspend fun add(data: TaskReqDto.AddDto): TaskResDto.Post {
-        return tasksService.add(data).body() ?: throw Exception("No body")
+    override suspend fun add(data: TaskReqDto): TaskResDto {
+        return tasksService.add(
+            data = data,
+            revision = Revision.value
+        )
     }
 
-    override suspend fun update(id: String, data: TaskReqDto.UpdateDto): TaskResDto.Update {
-        return tasksService.update(id, data).body() ?: throw Exception("No body")
+    override suspend fun update(id: String, data: TaskReqDto): TaskResDto{
+        return tasksService.update(id, Revision.value, data )
     }
 
-    override suspend fun delete(id: String): TaskResDto.Delete {
-        return tasksService.delete(id).body() ?: throw Exception("No body")
+    override suspend fun delete(id: String): TaskResDto {
+        return tasksService.delete(id, Revision.value)
     }
 
 }

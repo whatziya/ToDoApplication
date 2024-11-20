@@ -24,7 +24,7 @@ fun AppNavigation(
 ) {
     val navController = rememberNavController()
     val tasksViewModel: TasksViewModel = hiltViewModel()
-    val taskViewModel: TaskViewModel = hiltViewModel()
+
     NavHost(
         navController = navController,
         startDestination = Screen.Tasks.route
@@ -44,7 +44,7 @@ fun AppNavigation(
 
         composable(route = Screen.Task.route) {
             TaskScreen(
-                viewModel = taskViewModel,
+                viewModel = hiltViewModel(),
                 taskId = DEFAULT_TASK_ID,
                 onExit = { navController.popBackStack() }
             )
@@ -56,7 +56,7 @@ fun AppNavigation(
         ) { backStackEntry ->
             val taskId = backStackEntry.arguments?.getString(KEY_TASK_ID) ?: DEFAULT_TASK_ID
             TaskScreen(
-                viewModel = taskViewModel,
+                viewModel = hiltViewModel(),
                 taskId = taskId,
                 onExit = { navController.popBackStack() }
             )

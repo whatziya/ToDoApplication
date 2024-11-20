@@ -15,7 +15,7 @@ data class TaskEntity(
     @ColumnInfo(name = Constants.TaskEntityName.IMPORTANCE)
     val importance : Int,
     @ColumnInfo(name = Constants.TaskEntityName.DEADLINE)
-    val deadline : Long,
+    val deadline : Long?,
     @ColumnInfo(name = Constants.TaskEntityName.IS_COMPLETED)
     val isCompleted : Boolean,
     @ColumnInfo(name = Constants.TaskEntityName.CREATED_AT)

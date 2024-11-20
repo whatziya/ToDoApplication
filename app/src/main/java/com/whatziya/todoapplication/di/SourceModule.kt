@@ -1,6 +1,6 @@
 package com.whatziya.todoapplication.di
 
-import com.whatziya.todoapplication.data.api.TasksService
+import com.whatziya.todoapplication.data.api.TasksApi
 import com.whatziya.todoapplication.data.database.dao.MainDao
 import com.whatziya.todoapplication.data.source.local.TaskLocalDataSource
 import com.whatziya.todoapplication.data.source.local.TaskLocalDataSourceImpl
@@ -27,7 +27,7 @@ object SourceModule {
     @Singleton
     @Provides
     fun provideTaskRemoteDataSource(
-        service: TasksService
+        service: TasksApi
     ): TaskRemoteDataSource {
         return TaskRemoteDataSourceImpl(service)
     }

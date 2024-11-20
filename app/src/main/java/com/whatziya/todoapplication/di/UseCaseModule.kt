@@ -1,11 +1,11 @@
 package com.whatziya.todoapplication.di
 
-import com.whatziya.todoapplication.data.repository.task.TaskRepository
+import com.whatziya.todoapplication.data.repository.remote.task.RemoteRepository
 import com.whatziya.todoapplication.domain.mapper.TaskMapper
 import com.whatziya.todoapplication.domain.usecase.AddUseCase
 import com.whatziya.todoapplication.domain.usecase.DeleteUseCase
 import com.whatziya.todoapplication.domain.usecase.GetAllUseCase
-import com.whatziya.todoapplication.domain.usecase.UpdateTaskUseCase
+import com.whatziya.todoapplication.domain.usecase.UpdateUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,7 +17,7 @@ object UseCaseModule {
 
     @Provides
     fun provideGetAllUseCase(
-        taskRepository: TaskRepository,
+        taskRepository: RemoteRepository,
         taskMapper: TaskMapper
     ): GetAllUseCase {
         return GetAllUseCase(taskRepository, taskMapper)
@@ -25,7 +25,7 @@ object UseCaseModule {
 
     @Provides
     fun provideAddUseCase(
-        taskRepository: TaskRepository,
+        taskRepository: RemoteRepository,
         taskMapper: TaskMapper
     ): AddUseCase {
         return AddUseCase(taskRepository, taskMapper)
@@ -33,15 +33,15 @@ object UseCaseModule {
 
     @Provides
     fun provideUpdateTaskUseCase(
-        taskRepository: TaskRepository,
+        taskRepository: RemoteRepository,
         taskMapper: TaskMapper
-    ): UpdateTaskUseCase {
-        return UpdateTaskUseCase(taskRepository, taskMapper)
+    ): UpdateUseCase {
+        return UpdateUseCase(taskRepository, taskMapper)
     }
 
     @Provides
     fun provideDeleteUseCase(
-        taskRepository: TaskRepository
+        taskRepository: RemoteRepository
     ): DeleteUseCase {
         return DeleteUseCase(taskRepository)
     }

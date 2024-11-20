@@ -7,8 +7,7 @@ import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.chuckerteam.chucker.api.RetentionManager
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.whatziya.todoapplication.BuildConfig
-import com.whatziya.todoapplication.data.api.TasksService
-import com.whatziya.todoapplication.preferences.PreferencesProvider
+import com.whatziya.todoapplication.data.api.TasksApi
 import com.whatziya.todoapplication.utils.Constants
 import dagger.Module
 import dagger.Provides
@@ -22,6 +21,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Converter
 import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 @Module
@@ -50,30 +50,22 @@ object NetworkModule {
         .redactHeaders(Constants.Header.TOKEN_TITLE, Constants.Header.TOKEN_TYPE)
         .alwaysReadResponseBody(true).createShortcut(true).build()
 
-    @[Provides Singleton]
-    fun provideJsonSerializer(): Json {
-        return Json {
-            ignoreUnknownKeys = true
-            isLenient = true
-            encodeDefaults = false
-        }
-    }
+
+
     @[Provides Singleton]
     fun provideOkHttpClient(
-        prefsProvider: PreferencesProvider,
         @ApplicationContext context: Context
     ): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor { chain ->
                 val original = chain.request()
-                val request = original.newBuilder().apply {
-                    if (prefsProvider.accessToken.isNotEmpty()) {
-                        addHeader(
-                            Constants.Header.TOKEN_TITLE,
-                            Constants.Header.TOKEN_TYPE + " " + prefsProvider.accessToken
-                        )
-                    }
-                }.method(original.method, original.body).build()
+                    val request = original.newBuilder().apply {
+                    addHeader(
+                        Constants.Header.TOKEN_TITLE,
+                        Constants.Header.TOKEN_TYPE + " " + Constants.Header.ACCESS_TOKEN
+                    )
+
+                }.build()
                 chain.proceed(request)
             }
             .addInterceptor(HttpLoggingInterceptor { message ->
@@ -87,16 +79,18 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideRetrofit(
-        okHttpClient: OkHttpClient,
-        converter: Converter.Factory
+        okHttpClient: OkHttpClient
     ): Retrofit {
-        return Retrofit.Builder().baseUrl(BuildConfig.BASE_URL).client(okHttpClient)
-            .addConverterFactory(converter).build()
+        return Retrofit.Builder()
+            .baseUrl(BuildConfig.BASE_URL)
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
     }
 
     @Provides
     @Singleton
     fun provideTasksService(
         retrofit: Retrofit
-    ): TasksService = retrofit.create(TasksService::class.java)
+    ): TasksApi = retrofit.create(TasksApi::class.java)
 }

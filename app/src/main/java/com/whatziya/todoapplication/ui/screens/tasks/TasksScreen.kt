@@ -63,7 +63,7 @@ fun TasksScreen(
         modifier = Modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
         topBar = {
             TasksTopAppBar(topAppBarScrollBehavior = topAppBarScrollBehavior,
-                completedTasksCount = tasks.size,
+                completedTasksCount = tasks.filter { it.isCompleted }.size,
                 showCompletedTasks = areCompletedTasksAreShown,
                 onToggleShowCompleted = {
                     areCompletedTasksAreShown = !areCompletedTasksAreShown
@@ -79,7 +79,8 @@ fun TasksScreen(
             showCompletedTasks = areCompletedTasksAreShown,
             onTaskClick = onTaskClick,
             paddingValues = innerPadding,
-            onAddNewTaskButtonClick = onAddNewTaskButtonClick
+            onAddNewTaskButtonClick = onAddNewTaskButtonClick,
+            onToggleCheckBox = viewModel::updateTask
         )
     }
 }
@@ -105,7 +106,8 @@ fun TaskList(
     showCompletedTasks: Boolean,
     onTaskClick: (taskId: String) -> Unit,
     paddingValues: PaddingValues,
-    onAddNewTaskButtonClick: () -> Unit
+    onAddNewTaskButtonClick: () -> Unit,
+    onToggleCheckBox: (TaskEntity) -> Unit
 ) {
     Surface(
         modifier = Modifier
@@ -122,7 +124,8 @@ fun TaskList(
             items(filteredItems.size) { item ->
                 TaskContainer(
                     taskItem = filteredItems[item],
-                    onClick = { onTaskClick(it) }
+                    onClick = { onTaskClick(it) },
+                    onToggleCheckBox = onToggleCheckBox
                 )
             }
             item {
@@ -144,7 +147,7 @@ fun TaskList(
 }
 
 @Composable
-fun TaskContainer(taskItem: TaskEntity, onClick: (taskId: String) -> Unit) {
+fun TaskContainer(taskItem: TaskEntity, onClick: (taskId: String) -> Unit, onToggleCheckBox: (TaskEntity) -> Unit) {
     Row(
         modifier = Modifier
             .clickable { onClick(taskItem.id) }
@@ -155,7 +158,9 @@ fun TaskContainer(taskItem: TaskEntity, onClick: (taskId: String) -> Unit) {
     ) {
         Checkbox(
             checked = taskItem.isCompleted,
-            onCheckedChange = {},
+            onCheckedChange = {
+                onToggleCheckBox(taskItem)
+            },
             enabled = !taskItem.isCompleted,
             colors = if (taskItem.isCompleted) {
                 CheckboxColors(
@@ -231,14 +236,10 @@ fun TaskContainer(taskItem: TaskEntity, onClick: (taskId: String) -> Unit) {
                 )
                 Text(
                     text =
-                        if(taskItem.deadline != null) {
-                            SimpleDateFormat(
-                                "dd.MM.yyyy",
-                                Locale.getDefault()
-                            ).format(taskItem.deadline)
-                        } else {
-                            ""
-                        },
+                    SimpleDateFormat(
+                        "dd.MM.yyyy",
+                        Locale.getDefault()
+                    ).format(taskItem.modifiedAt),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.padding(top = 4.dp)

@@ -29,6 +29,7 @@ object Constants {
         const val ACCEPT_TITLE = "accept"
         const val APPLICATION_JSON_VALUE = "application/json"
         const val TOKEN_TYPE = "Bearer"
+        const val ACCESS_TOKEN = "Nimrodel"
     }
 
 }
