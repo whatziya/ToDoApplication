@@ -7,7 +7,7 @@ import javax.inject.Inject
 class DeleteUseCase @Inject constructor(
     private val repository: RemoteRepository
 ) {
-    suspend operator fun invoke(id: String): TaskResDto{
+    suspend operator fun invoke(id: String): TaskResDto {
         return repository.delete(id)
     }
 }

@@ -7,6 +7,3 @@ data class TaskReqDto(
     @field:SerializedName("element")
     val element: TaskItem
 )
-
-
-

@@ -10,7 +10,7 @@ object Constants {
         const val TASKS = "tasks"
     }
 
-    object TaskEntityName{
+    object TaskEntityName {
         const val ID = "id"
         const val TEXT = "text"
         const val IMPORTANCE = "importance"
@@ -31,5 +31,4 @@ object Constants {
         const val TOKEN_TYPE = "Bearer"
         const val ACCESS_TOKEN = "Nimrodel"
     }
-
 }

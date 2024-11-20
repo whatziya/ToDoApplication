@@ -5,75 +5,83 @@ import com.google.gson.Gson
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-fun SharedPreferences.stringNullable(
-    defaultValue: String? = null, key: (KProperty<*>) -> String = KProperty<*>::name
-): ReadWriteProperty<Any, String?> = object : ReadWriteProperty<Any, String?> {
-
-    override fun getValue(thisRef: Any, property: KProperty<*>): String? =
-        getString(key(property), defaultValue)
-
-    override fun setValue(thisRef: Any, property: KProperty<*>, value: String?) {
-        edit().putString(key(property), value).apply()
-    }
-}
-
 fun SharedPreferences.string(
-    defaultValue: String = "", key: (KProperty<*>) -> String = KProperty<*>::name
+    defaultValue: String = "",
+    key: (KProperty<*>) -> String = KProperty<*>::name
 ): ReadWriteProperty<Any, String> = object : ReadWriteProperty<Any, String> {
     override fun getValue(
-        thisRef: Any, property: KProperty<*>
+        thisRef: Any,
+        property: KProperty<*>
     ) = getString(key(property), defaultValue) ?: ""
 
     override fun setValue(
-        thisRef: Any, property: KProperty<*>, value: String
+        thisRef: Any,
+        property: KProperty<*>,
+        value: String
     ) = edit().putString(key(property), value).apply()
 }
 
 fun SharedPreferences.int(
-    defaultValue: Int = 0, key: (KProperty<*>) -> String = KProperty<*>::name
+    defaultValue: Int = 0,
+    key: (KProperty<*>) -> String = KProperty<*>::name
 ): ReadWriteProperty<Any, Int> = object : ReadWriteProperty<Any, Int> {
     override fun getValue(
-        thisRef: Any, property: KProperty<*>
+        thisRef: Any,
+        property: KProperty<*>
     ) = getInt(key(property), defaultValue)
 
     override fun setValue(
-        thisRef: Any, property: KProperty<*>, value: Int
+        thisRef: Any,
+        property: KProperty<*>,
+        value: Int
     ) = edit().putInt(key(property), value).apply()
 }
 
 fun SharedPreferences.float(
-    defaultValue: Float = 0.0f, key: (KProperty<*>) -> String = KProperty<*>::name
+    defaultValue: Float = 0.0f,
+    key: (KProperty<*>) -> String = KProperty<*>::name
 ): ReadWriteProperty<Any, Float> = object : ReadWriteProperty<Any, Float> {
     override fun getValue(
-        thisRef: Any, property: KProperty<*>
+        thisRef: Any,
+        property: KProperty<*>
     ) = getFloat(key(property), defaultValue)
 
     override fun setValue(
-        thisRef: Any, property: KProperty<*>, value: Float
+        thisRef: Any,
+        property: KProperty<*>,
+        value: Float
     ) = edit().putFloat(key(property), value).apply()
 }
 
 fun SharedPreferences.long(
-    defaultValue: Long = 0, key: (KProperty<*>) -> String = KProperty<*>::name
+    defaultValue: Long = 0,
+    key: (KProperty<*>) -> String = KProperty<*>::name
 ): ReadWriteProperty<Any, Long> = object : ReadWriteProperty<Any, Long> {
     override fun getValue(
-        thisRef: Any, property: KProperty<*>
+        thisRef: Any,
+        property: KProperty<*>
     ) = getLong(key(property), defaultValue)
 
     override fun setValue(
-        thisRef: Any, property: KProperty<*>, value: Long
+        thisRef: Any,
+        property: KProperty<*>,
+        value: Long
     ) = edit().putLong(key(property), value).apply()
 }
 
 fun SharedPreferences.boolean(
-    defaultValue: Boolean = false, key: (KProperty<*>) -> String = KProperty<*>::name
+    defaultValue: Boolean = false,
+    key: (KProperty<*>) -> String = KProperty<*>::name
 ): ReadWriteProperty<Any, Boolean> = object : ReadWriteProperty<Any, Boolean> {
     override fun getValue(
-        thisRef: Any, property: KProperty<*>
+        thisRef: Any,
+        property: KProperty<*>
     ) = getBoolean(key(property), defaultValue)
 
     override fun setValue(
-        thisRef: Any, property: KProperty<*>, value: Boolean
+        thisRef: Any,
+        property: KProperty<*>,
+        value: Boolean
     ) = edit().putBoolean(key(property), value).apply()
 }
 
@@ -93,35 +101,42 @@ inline fun <reified V> SharedPreferences.customObject(
 }
 
 inline fun <reified T> SharedPreferences.custom(
-    gson: Gson, crossinline key: (KProperty<*>) -> String = KProperty<*>::name
+    gson: Gson,
+    crossinline key: (KProperty<*>) -> String = KProperty<*>::name
 ): ReadWriteProperty<Any, T?> = object : ReadWriteProperty<Any, T?> {
     override fun getValue(thisRef: Any, property: KProperty<*>): T? {
         val json = getString(key(property), "")
-        return if (json.isNullOrBlank()) null
-        else gson.fromJson(json, T::class.java)
+        return if (json.isNullOrBlank()) {
+            null
+        } else {
+            gson.fromJson(json, T::class.java)
+        }
     }
 
     override fun setValue(thisRef: Any, property: KProperty<*>, value: T?) {
-        if (value != null) edit().putString(key(property), gson.toJson(value)).apply()
-        else edit().putString(key(property), "").apply()
+        if (value != null) {
+            edit().putString(key(property), gson.toJson(value)).apply()
+        } else {
+            edit().putString(key(property), "").apply()
+        }
     }
 }
 
 inline fun <reified T> SharedPreferences.custom(
-    gson: Gson, defaultValue: T, crossinline key: (KProperty<*>) -> String = KProperty<*>::name
+    gson: Gson,
+    defaultValue: T,
+    crossinline key: (KProperty<*>) -> String = KProperty<*>::name
 ): ReadWriteProperty<Any, T> = object : ReadWriteProperty<Any, T> {
     override fun getValue(thisRef: Any, property: KProperty<*>): T {
         val json = getString(key(property), "")
-        return if (json.isNullOrBlank()) defaultValue
-        else gson.fromJson(json, T::class.java)
+        return if (json.isNullOrBlank()) {
+            defaultValue
+        } else {
+            gson.fromJson(json, T::class.java)
+        }
     }
 
     override fun setValue(thisRef: Any, property: KProperty<*>, value: T) {
         edit().putString(key(property), gson.toJson(value)).apply()
     }
 }
-
-
-
-
-

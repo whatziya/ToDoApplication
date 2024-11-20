@@ -7,7 +7,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.whatziya.todoapplication.ui.screens.task.TaskScreen
-import com.whatziya.todoapplication.ui.screens.task.TaskViewModel
 import com.whatziya.todoapplication.ui.screens.tasks.TasksScreen
 import com.whatziya.todoapplication.ui.screens.tasks.TasksViewModel
 
@@ -20,8 +19,7 @@ sealed class Screen(val route: String) {
 }
 
 @Composable
-fun AppNavigation(
-) {
+fun AppNavigation() {
     val navController = rememberNavController()
     val tasksViewModel: TasksViewModel = hiltViewModel()
 
@@ -29,7 +27,6 @@ fun AppNavigation(
         navController = navController,
         startDestination = Screen.Tasks.route
     ) {
-
         composable(route = Screen.Tasks.route) {
             TasksScreen(
                 viewModel = tasksViewModel,

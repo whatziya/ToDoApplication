@@ -45,12 +45,11 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideChuckerInterceptor(
-        context: Context, collector: ChuckerCollector
+        context: Context,
+        collector: ChuckerCollector
     ) = ChuckerInterceptor.Builder(context).collector(collector).maxContentLength(250_000L)
         .redactHeaders(Constants.Header.TOKEN_TITLE, Constants.Header.TOKEN_TYPE)
         .alwaysReadResponseBody(true).createShortcut(true).build()
-
-
 
     @[Provides Singleton]
     fun provideOkHttpClient(
@@ -59,20 +58,21 @@ object NetworkModule {
         return OkHttpClient.Builder()
             .addInterceptor { chain ->
                 val original = chain.request()
-                    val request = original.newBuilder().apply {
+                val request = original.newBuilder().apply {
                     addHeader(
                         Constants.Header.TOKEN_TITLE,
                         Constants.Header.TOKEN_TYPE + " " + Constants.Header.ACCESS_TOKEN
                     )
-
                 }.build()
                 chain.proceed(request)
             }
-            .addInterceptor(HttpLoggingInterceptor { message ->
-                Log.d("OkHttp", message)
-            }.apply {
-                level = HttpLoggingInterceptor.Level.BODY
-            })
+            .addInterceptor(
+                HttpLoggingInterceptor { message ->
+                    Log.d("OkHttp", message)
+                }.apply {
+                    level = HttpLoggingInterceptor.Level.BODY
+                }
+            )
             .addInterceptor(ChuckerInterceptor(context)).build()
     }
 

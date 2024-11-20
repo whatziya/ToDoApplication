@@ -27,6 +27,4 @@ class LocalRepositoryImpl @Inject constructor(
     override suspend fun deleteTaskById(id: String) {
         localDataSource.deleteTaskById(id)
     }
-
-
 }

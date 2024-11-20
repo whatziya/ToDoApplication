@@ -1,6 +1,5 @@
 package com.whatziya.todoapplication.di
 
-
 import com.whatziya.todoapplication.data.repository.local.task.LocalRepository
 import com.whatziya.todoapplication.data.repository.local.task.LocalRepositoryImpl
 import com.whatziya.todoapplication.data.repository.remote.task.RemoteRepository

@@ -20,12 +20,11 @@ class TaskRemoteDataSourceImpl @Inject constructor(
         )
     }
 
-    override suspend fun update(id: String, data: TaskReqDto): TaskResDto{
-        return tasksService.update(id, Revision.value, data )
+    override suspend fun update(id: String, data: TaskReqDto): TaskResDto {
+        return tasksService.update(id, Revision.value, data)
     }
 
     override suspend fun delete(id: String): TaskResDto {
         return tasksService.delete(id, Revision.value)
     }
-
 }

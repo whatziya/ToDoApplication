@@ -1,11 +1,9 @@
 package com.whatziya.todoapplication.data.api
 
-
 import com.whatziya.todoapplication.data.dto.request.TaskReqDto
 import com.whatziya.todoapplication.data.dto.response.TaskResDto
 import com.whatziya.todoapplication.data.dto.response.TasksResDto
 import com.whatziya.todoapplication.utils.Constants
-import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET

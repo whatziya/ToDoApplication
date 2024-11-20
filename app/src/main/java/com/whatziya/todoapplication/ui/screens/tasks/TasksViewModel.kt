@@ -25,7 +25,6 @@ class TasksViewModel @Inject constructor(
     private val _tasks = MutableStateFlow<List<TaskEntity>>(emptyList())
     val tasks: StateFlow<List<TaskEntity>> = _tasks
 
-
     init {
         viewModelScope.launch {
             taskRepository.getAllTasks().collect { tasks ->
@@ -33,7 +32,6 @@ class TasksViewModel @Inject constructor(
             }
             println(getAllUseCase())
         }
-
     }
 
     fun getAllTasks() {
@@ -80,6 +78,4 @@ class TasksViewModel @Inject constructor(
     fun setShowCompletedPreference(value: Boolean) {
         preferencesProvider.showCompleted = value
     }
-
-
 }

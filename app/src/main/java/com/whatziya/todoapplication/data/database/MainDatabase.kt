@@ -7,5 +7,5 @@ import com.whatziya.todoapplication.data.database.entity.TaskEntity
 
 @Database(entities = [TaskEntity::class], version = 1)
 abstract class MainDatabase : RoomDatabase() {
-    abstract fun mainDao() : MainDao
+    abstract fun mainDao(): MainDao
 }

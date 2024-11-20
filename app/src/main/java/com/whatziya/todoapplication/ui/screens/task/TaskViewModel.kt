@@ -50,7 +50,7 @@ class TaskViewModel @Inject constructor(
     }
 
     fun updateTask() = viewModelScope.launch {
-        //this function must be varied to any case
+        // this function must be varied to any case
         updateModifiedAt()
         repository.updateTask(task.value!!)
     }
@@ -75,5 +75,4 @@ class TaskViewModel @Inject constructor(
     private fun updateModifiedAt() {
         _task.value = task.value?.copy(modifiedAt = System.currentTimeMillis())
     }
-
 }

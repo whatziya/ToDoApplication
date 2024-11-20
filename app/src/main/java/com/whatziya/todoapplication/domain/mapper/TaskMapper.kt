@@ -11,7 +11,7 @@ class TaskMapper @Inject constructor() : BaseMapper<TaskItem, TaskEntity> {
         TaskEntity(
             id = id,
             text = text,
-            importance = when(importance){
+            importance = when (importance) {
                 "low" -> 1
                 "basic" -> 0
                 else -> 2

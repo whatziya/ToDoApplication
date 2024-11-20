@@ -9,17 +9,17 @@ import com.whatziya.todoapplication.utils.Constants
 data class TaskEntity(
     @PrimaryKey
     @ColumnInfo(name = Constants.TaskEntityName.ID)
-    val id : String,
+    val id: String,
     @ColumnInfo(name = Constants.TaskEntityName.TEXT)
-    var text : String,
+    var text: String,
     @ColumnInfo(name = Constants.TaskEntityName.IMPORTANCE)
-    val importance : Int,
+    val importance: Int,
     @ColumnInfo(name = Constants.TaskEntityName.DEADLINE)
-    val deadline : Long?,
+    val deadline: Long?,
     @ColumnInfo(name = Constants.TaskEntityName.IS_COMPLETED)
-    val isCompleted : Boolean,
+    val isCompleted: Boolean,
     @ColumnInfo(name = Constants.TaskEntityName.CREATED_AT)
-    val createdAt : Long,
+    val createdAt: Long,
     @ColumnInfo(name = Constants.TaskEntityName.MODIFIED_AT)
-    var modifiedAt : Long?
+    var modifiedAt: Long?
 )

@@ -11,17 +11,17 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface MainDao {
     @Query("SELECT * FROM ${Constants.EntityName.TASKS}")
-    fun getAllTasks() : Flow<List<TaskEntity>>
+    fun getAllTasks(): Flow<List<TaskEntity>>
 
     @Query("SELECT * FROM ${Constants.EntityName.TASKS} WHERE id=:id")
-    fun getTaskById(id : String) : Flow<TaskEntity>
+    fun getTaskById(id: String): Flow<TaskEntity>
 
     @Insert
-    suspend fun insertTask(task : TaskEntity)
+    suspend fun insertTask(task: TaskEntity)
 
     @Update
-    suspend fun updateTask(task : TaskEntity)
+    suspend fun updateTask(task: TaskEntity)
 
     @Query("DELETE FROM ${Constants.EntityName.TASKS} WHERE id = :id")
-    suspend fun deleteTaskById(id : String)
+    suspend fun deleteTaskById(id: String)
 }

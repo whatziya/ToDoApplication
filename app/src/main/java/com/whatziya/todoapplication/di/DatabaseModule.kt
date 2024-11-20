@@ -47,7 +47,9 @@ object DatabaseModule {
     @Singleton
     fun provideRoomDatabase(@ApplicationContext context: Context): MainDatabase {
         return Room.databaseBuilder(
-            context, MainDatabase::class.java, DATABASE_NAME
+            context,
+            MainDatabase::class.java,
+            DATABASE_NAME
         ).fallbackToDestructiveMigration().build()
     }
 
@@ -55,5 +57,4 @@ object DatabaseModule {
     fun provideToDoDao(roomDatabase: MainDatabase): MainDao {
         return roomDatabase.mainDao()
     }
-
 }
