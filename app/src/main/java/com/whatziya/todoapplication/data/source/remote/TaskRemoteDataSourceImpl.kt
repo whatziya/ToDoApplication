@@ -4,27 +4,56 @@ import com.whatziya.todoapplication.data.api.TasksApi
 import com.whatziya.todoapplication.data.dto.request.TaskReqDto
 import com.whatziya.todoapplication.data.dto.response.TaskResDto
 import com.whatziya.todoapplication.data.dto.response.TasksResDto
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class TaskRemoteDataSourceImpl @Inject constructor(
     private val tasksService: TasksApi
-) : TaskRemoteDataSource {
-    override suspend fun getAll(): TasksResDto {
-        return tasksService.getAll()
+) {
+    suspend fun getAll(): Result<TasksResDto> = withContext(Dispatchers.IO) {
+        val response = tasksService.getAll()
+        if (response.isSuccessful && response.body() != null) {
+            Result.success(response.body()!!)
+        } else if (response.errorBody() != null) {
+            Result.failure(Exception(response.message()))
+        } else {
+            Result.failure(Throwable("Xato"))
+        }
     }
 
-    override suspend fun add(data: TaskReqDto): TaskResDto {
-        return tasksService.add(
-            data = data,
-            revision = Revision.value
-        )
+    suspend fun add(data: TaskReqDto): Result<TaskResDto> = withContext(Dispatchers.IO) {
+        val response = tasksService.add(data = data)
+        if (response.isSuccessful && response.body() != null) {
+            Result.success(response.body()!!)
+        } else if (response.errorBody() != null) {
+            Result.failure(Exception(response.message()))
+        } else {
+            Result.failure(Throwable("Xato"))
+        }
     }
 
-    override suspend fun update(id: String, data: TaskReqDto): TaskResDto {
-        return tasksService.update(id, Revision.value, data)
+    suspend fun update(id: String, data: TaskReqDto): Result<TaskResDto> = withContext(Dispatchers.IO) {
+        val response = tasksService.update(id, data)
+        if (response.isSuccessful && response.body() != null) {
+            Result.success(response.body()!!)
+        } else if (response.errorBody() != null) {
+            Result.failure(Exception(response.message()))
+        } else {
+            Result.failure(Throwable("Xato"))
+        }
     }
 
-    override suspend fun delete(id: String): TaskResDto {
-        return tasksService.delete(id, Revision.value)
+    suspend fun delete(id: String): Result<TaskResDto> = withContext(Dispatchers.IO) {
+        val response = tasksService.delete(id)
+        if (response.isSuccessful && response.body() != null) {
+            Result.success(response.body()!!)
+        } else if (response.errorBody() != null) {
+            Result.failure(Exception(response.message()))
+        } else {
+            Result.failure(Throwable("Xato"))
+        }
     }
 }

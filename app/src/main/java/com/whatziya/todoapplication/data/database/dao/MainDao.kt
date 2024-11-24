@@ -6,15 +6,14 @@ import androidx.room.Query
 import androidx.room.Update
 import com.whatziya.todoapplication.data.database.entity.TaskEntity
 import com.whatziya.todoapplication.utils.Constants
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MainDao {
     @Query("SELECT * FROM ${Constants.EntityName.TASKS}")
-    fun getAllTasks(): Flow<List<TaskEntity>>
+    fun getAllTasks(): List<TaskEntity>
 
     @Query("SELECT * FROM ${Constants.EntityName.TASKS} WHERE id=:id")
-    fun getTaskById(id: String): Flow<TaskEntity>
+    fun getTaskById(id: String): TaskEntity
 
     @Insert
     suspend fun insertTask(task: TaskEntity)

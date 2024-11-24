@@ -8,6 +8,7 @@ import com.chuckerteam.chucker.api.RetentionManager
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.whatziya.todoapplication.BuildConfig
 import com.whatziya.todoapplication.data.api.TasksApi
+import com.whatziya.todoapplication.data.source.common.Revision
 import com.whatziya.todoapplication.utils.Constants
 import dagger.Module
 import dagger.Provides
@@ -63,6 +64,7 @@ object NetworkModule {
                         Constants.Header.TOKEN_TITLE,
                         Constants.Header.TOKEN_TYPE + " " + Constants.Header.ACCESS_TOKEN
                     )
+                    addHeader("revision", Revision.value.toString())
                 }.build()
                 chain.proceed(request)
             }

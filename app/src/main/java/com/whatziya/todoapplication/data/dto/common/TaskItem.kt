@@ -1,4 +1,4 @@
-package com.whatziya.todoapplication.data.dto
+package com.whatziya.todoapplication.data.dto.common
 
 import com.google.gson.annotations.SerializedName
 

@@ -4,8 +4,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.whatziya.todoapplication.data.database.entity.TaskEntity
-import com.whatziya.todoapplication.data.repository.local.task.LocalRepository
-import com.whatziya.todoapplication.domain.usecase.AddUseCase
+import com.whatziya.todoapplication.data.repository.TaskRepository
 import com.whatziya.todoapplication.navigation.DEFAULT_TASK_ID
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,21 +13,33 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
 
+sealed interface TaskState {
+    class Error():TaskState
+
+    class Success(val task: TaskEntity):TaskState
+
+    class NewTask(val task: TaskEntity):TaskState
+
+    object None:TaskState
+
+    object GoBack:TaskState
+}
+
 @HiltViewModel
 class TaskViewModel @Inject constructor(
-    private val repository: LocalRepository,
-    private val addUseCase: AddUseCase,
+    private val repository: TaskRepository
 ) : ViewModel() {
 
-    private val _task = MutableStateFlow<TaskEntity?>(null)
-    val task: StateFlow<TaskEntity?> = _task
+
+    private val _taskState = MutableStateFlow<TaskState>(TaskState.None)
+    val taskState: StateFlow<TaskState> = _taskState
 
     private var importanceLevel = mutableIntStateOf(0)
 
     fun getTaskById(id: String) {
         viewModelScope.launch {
             if (id == DEFAULT_TASK_ID) {
-                _task.value = TaskEntity(
+                _taskState.value = TaskState.NewTask(TaskEntity(
                     id = UUID.randomUUID().toString(),
                     text = "",
                     importance = 0,
@@ -36,7 +47,7 @@ class TaskViewModel @Inject constructor(
                     isCompleted = false,
                     createdAt = System.currentTimeMillis(),
                     modifiedAt = System.currentTimeMillis()
-                )
+                ))
             } else {
                 repository.getTaskById(id).collect { task ->
                     _task.value = task
@@ -45,8 +56,15 @@ class TaskViewModel @Inject constructor(
         }
     }
 
-    fun insertTask() = viewModelScope.launch {
-        repository.insertTask(task.value!!)
+    fun insertTask() {
+        viewModelScope.launch {
+            task.value?.let {
+                repository.insertTask(it)
+                _taskState.value = TaskState.GoBack
+            } ?: run {
+                _taskState.value = TaskState.Error()
+            }
+        }
     }
 
     fun updateTask() = viewModelScope.launch {
