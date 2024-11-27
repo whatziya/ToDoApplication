@@ -3,9 +3,9 @@ package com.whatziya.todoapplication.ui.screens.tasks
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.whatziya.todoapplication.data.database.entity.TaskEntity
+import com.whatziya.todoapplication.data.dto.request.TaskReqDto
 import com.whatziya.todoapplication.data.repository.TaskRepository
-import com.whatziya.todoapplication.data.repository.remote.task.RemoteRepository
-import com.whatziya.todoapplication.domain.mapper.TaskMapper
+import com.whatziya.todoapplication.domain.mapper.toDTO
 import com.whatziya.todoapplication.preferences.PreferencesProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,44 +24,29 @@ class TasksViewModel @Inject constructor(
     val tasks: StateFlow<List<TaskEntity>> = _tasks
 
     init {
-//            taskRepository.getAllTasks().onEach { tasks ->
-//                _tasks.value = tasks
-//            }.launchIn(viewModelScope)
-           val task = remoteRepository.getAll().onEach { response ->
-                _tasks.value = task.list.map { item ->
-                    taskMapper.toUIModel(item)
-                }
-            }.launchIn(viewModelScope)
+        taskRepository.getAll().onEach { response ->
+            _tasks.value = response
+        }.launchIn(viewModelScope)
     }
 
-    fun getAllTasks() {
+    fun getAll() {
         viewModelScope.launch {
-
-                _tasks.value =  taskRepository.getAllTasks()
+            taskRepository.getAll().onEach { response ->
+                _tasks.value = response
+            }
         }
     }
 
-    fun updateTask(task: TaskEntity) {
+    fun update(task: TaskEntity) {
         viewModelScope.launch {
             val updatedTask = task.copy(isCompleted = true)
-            taskRepository.updateTask(updatedTask)
+            taskRepository.update(updatedTask.id, TaskReqDto(updatedTask.toDTO()))
         }
     }
 
-    private fun loadTasks() {
+    fun delete(task: String) {
         viewModelScope.launch {
-
-        }
-    }
-
-    fun updateTaskNet(task: TaskEntity) {
-        viewModelScope.launch {
-            val updatedTask = task.copy(isCompleted = !task.isCompleted)
-        }
-    }
-
-    fun deleteTask(task: String) {
-        viewModelScope.launch {
+            taskRepository.delete(task)
         }
     }
 

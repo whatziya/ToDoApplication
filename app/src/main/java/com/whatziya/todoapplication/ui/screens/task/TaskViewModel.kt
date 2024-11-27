@@ -4,7 +4,9 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.whatziya.todoapplication.data.database.entity.TaskEntity
+import com.whatziya.todoapplication.data.dto.request.TaskReqDto
 import com.whatziya.todoapplication.data.repository.TaskRepository
+import com.whatziya.todoapplication.domain.mapper.toDTO
 import com.whatziya.todoapplication.navigation.DEFAULT_TASK_ID
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,33 +15,20 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
 
-sealed interface TaskState {
-    class Error():TaskState
-
-    class Success(val task: TaskEntity):TaskState
-
-    class NewTask(val task: TaskEntity):TaskState
-
-    object None:TaskState
-
-    object GoBack:TaskState
-}
-
 @HiltViewModel
 class TaskViewModel @Inject constructor(
     private val repository: TaskRepository
 ) : ViewModel() {
 
-
-    private val _taskState = MutableStateFlow<TaskState>(TaskState.None)
-    val taskState: StateFlow<TaskState> = _taskState
+    private val _task = MutableStateFlow<TaskEntity?>(null)
+    val task: StateFlow<TaskEntity?> = _task
 
     private var importanceLevel = mutableIntStateOf(0)
 
     fun getTaskById(id: String) {
         viewModelScope.launch {
             if (id == DEFAULT_TASK_ID) {
-                _taskState.value = TaskState.NewTask(TaskEntity(
+                _task.value = TaskEntity(
                     id = UUID.randomUUID().toString(),
                     text = "",
                     importance = 0,
@@ -47,34 +36,25 @@ class TaskViewModel @Inject constructor(
                     isCompleted = false,
                     createdAt = System.currentTimeMillis(),
                     modifiedAt = System.currentTimeMillis()
-                ))
+                )
             } else {
-                repository.getTaskById(id).collect { task ->
-                    _task.value = task
-                }
+                _task.value = repository._getTaskById(id)
             }
         }
     }
 
-    fun insertTask() {
-        viewModelScope.launch {
-            task.value?.let {
-                repository.insertTask(it)
-                _taskState.value = TaskState.GoBack
-            } ?: run {
-                _taskState.value = TaskState.Error()
-            }
-        }
+    fun insertTask() = viewModelScope.launch {
+        repository.add(TaskReqDto(_task.value!!.toDTO()))
     }
 
     fun updateTask() = viewModelScope.launch {
-        // this function must be varied to any case
+        //this function must be varied to any case
         updateModifiedAt()
-        repository.updateTask(task.value!!)
+        repository.update(_task.value!!.id, TaskReqDto(_task.value!!.toDTO()))
     }
 
     fun deleteTask(id: String) = viewModelScope.launch {
-        repository.deleteTaskById(id)
+        repository.delete(id)
     }
 
     fun updateText(text: String) {
@@ -93,4 +73,5 @@ class TaskViewModel @Inject constructor(
     private fun updateModifiedAt() {
         _task.value = task.value?.copy(modifiedAt = System.currentTimeMillis())
     }
+
 }

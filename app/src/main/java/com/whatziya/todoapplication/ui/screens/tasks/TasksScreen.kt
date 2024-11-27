@@ -50,7 +50,7 @@ fun TasksScreen(
             onTaskClick = onTaskClick,
             paddingValues = innerPadding,
             onAddNewTaskButtonClick = onAddNewTaskButtonClick,
-            onToggleCheckBox = viewModel::updateTask
+            onToggleCheckBox = viewModel::update
         )
     }
 }

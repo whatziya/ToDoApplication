@@ -10,7 +10,7 @@ import com.whatziya.todoapplication.utils.Constants
 @Dao
 interface MainDao {
     @Query("SELECT * FROM ${Constants.EntityName.TASKS}")
-    fun getAllTasks(): List<TaskEntity>
+    fun getAll(): List<TaskEntity>
 
     @Query("SELECT * FROM ${Constants.EntityName.TASKS} WHERE id=:id")
     fun getTaskById(id: String): TaskEntity
@@ -23,4 +23,7 @@ interface MainDao {
 
     @Query("DELETE FROM ${Constants.EntityName.TASKS} WHERE id = :id")
     suspend fun deleteTaskById(id: String)
+
+    @Query("DELETE FROM ${Constants.EntityName.TASKS}")
+    suspend fun deleteAllTasks()
 }

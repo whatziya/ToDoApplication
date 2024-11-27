@@ -21,6 +21,7 @@ import com.whatziya.todoapplication.ui.screens.task.items.ImportanceSelector
 import com.whatziya.todoapplication.ui.screens.task.items.TaskForm
 import com.whatziya.todoapplication.ui.screens.task.items.TaskTopAppBar
 
+
 sealed class TaskScreenMode {
     data object NewTask : TaskScreenMode()
     data object EditTask : TaskScreenMode()
@@ -41,7 +42,6 @@ fun TaskScreen(
     val taskMode =
         if (taskId.isEmpty()) TaskScreenMode.NewTask else TaskScreenMode.EditTask
 
-    println(taskMode)
     val context = LocalContext.current
 
     Scaffold(

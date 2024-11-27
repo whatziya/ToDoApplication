@@ -9,8 +9,8 @@ import javax.inject.Singleton
 class TaskLocalDataSourceImpl @Inject constructor(
     private val mainDao: MainDao
 ) {
-    fun getAllTasks(): List<TaskEntity> {
-        return mainDao.getAllTasks()
+    fun getAll(): List<TaskEntity> {
+        return mainDao.getAll()
     }
 
     fun getTaskById(id: String): TaskEntity {
@@ -27,5 +27,9 @@ class TaskLocalDataSourceImpl @Inject constructor(
 
     suspend fun deleteTaskById(id: String) {
         mainDao.deleteTaskById(id)
+    }
+
+    suspend fun deleteAllTasks() {
+        mainDao.deleteAllTasks()
     }
 }

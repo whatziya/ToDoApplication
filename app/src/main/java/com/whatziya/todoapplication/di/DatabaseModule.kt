@@ -6,6 +6,8 @@ import androidx.room.Room
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import com.whatziya.todoapplication.data.database.MainDatabase
+import com.whatziya.todoapplication.data.database.dao.DeletedDao
+import com.whatziya.todoapplication.data.database.dao.EditRemoteDao
 import com.whatziya.todoapplication.data.database.dao.MainDao
 import com.whatziya.todoapplication.preferences.PreferencesProvider
 import com.whatziya.todoapplication.utils.Constants
@@ -54,7 +56,17 @@ object DatabaseModule {
     }
 
     @Provides
-    fun provideToDoDao(roomDatabase: MainDatabase): MainDao {
+    fun provideMainDao(roomDatabase: MainDatabase): MainDao {
         return roomDatabase.mainDao()
+    }
+
+    @Provides
+    fun provideEditRemoteDao(roomDatabase: MainDatabase): EditRemoteDao {
+        return roomDatabase.editRemoteDao()
+    }
+
+    @Provides
+    fun provideDeletedDao(roomDatabase: MainDatabase): DeletedDao {
+        return roomDatabase.deletedDao()
     }
 }

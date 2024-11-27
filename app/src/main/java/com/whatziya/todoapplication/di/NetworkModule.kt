@@ -64,7 +64,7 @@ object NetworkModule {
                         Constants.Header.TOKEN_TITLE,
                         Constants.Header.TOKEN_TYPE + " " + Constants.Header.ACCESS_TOKEN
                     )
-                    addHeader("revision", Revision.value.toString())
+                    addHeader("X-Last-Known-Revision", Revision.value.toString())
                 }.build()
                 chain.proceed(request)
             }
@@ -92,7 +92,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideTasksService(
+    fun provideTasksApi(
         retrofit: Retrofit
     ): TasksApi = retrofit.create(TasksApi::class.java)
 }

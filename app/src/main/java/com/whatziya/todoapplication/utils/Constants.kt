@@ -8,6 +8,8 @@ object Constants {
 
     object EntityName {
         const val TASKS = "tasks"
+        const val DELETED = "deleted"
+        const val EDIT_REMOTE = "edit_remote"
     }
 
     object TaskEntityName {
@@ -20,14 +22,26 @@ object Constants {
         const val MODIFIED_AT = "modified_at"
     }
 
+    object DeletedEntityName {
+        const val ID = "id"
+    }
+
+    object EditRemoteEntityName {
+        const val ID = "id"
+        const val ACTION = "action"
+    }
+
+    object EditRemoteAction {
+        const val ADD = "add"
+        const val UPDATE = "update"
+    }
+
     object Endpoint {
         const val LIST = "list"
     }
 
     object Header {
         const val TOKEN_TITLE = "Authorization"
-        const val ACCEPT_TITLE = "accept"
-        const val APPLICATION_JSON_VALUE = "application/json"
         const val TOKEN_TYPE = "Bearer"
         const val ACCESS_TOKEN = "Nimrodel"
     }
