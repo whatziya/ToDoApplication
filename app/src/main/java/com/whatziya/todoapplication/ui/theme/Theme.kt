@@ -1,6 +1,5 @@
 package com.whatziya.todoapplication.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -12,32 +11,47 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+
+    primary = DarkColors.ColorBlue,
+    secondary = DarkColors.ColorGreen,
+
+    background = DarkColors.BackPrimary,
+    onPrimary = DarkColors.LabelPrimary,
+    onSecondary = DarkColors.LabelSecondary,
+    onTertiary = DarkColors.LabelTertiary,
+
+    surface = DarkColors.BackSecondary,
+    onSurface = DarkColors.SupportSeparator,
+
+    error = DarkColors.ColorRed,
+    onError = DarkColors.ColorRed,
+
+    onBackground = LightColors.ColorGray
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
 
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+    primary = LightColors.ColorBlue,
+    secondary = LightColors.ColorGreen,
+
+    background = LightColors.BackPrimary,
+    onPrimary = LightColors.LabelPrimary,
+    onSecondary = LightColors.LabelSecondary,
+    onTertiary = LightColors.LabelTertiary,
+
+    surface = LightColors.BackSecondary,
+    onSurface = LightColors.SupportSeparator,
+
+    error = LightColors.ColorRed,
+    onError = LightColors.ColorRed,
+
+    onBackground = LightColors.ColorGray
 )
 
 @Composable
 fun ToDoApplicationTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
